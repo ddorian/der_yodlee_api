@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% macro render_field(field, hide_label=None, icon=None, required=None) %}
+    <div class="form-group{% if icon %} has-feedback{% endif %}{% if field.errors %} has-error{% endif %}">
+        {% if not hide_label %}
+            <label for="{{ field.name }}">
+                {{ field.label.text }} {% if required %}<span class="text-red">*</span>{% endif %}
+            </label>
+        {% endif %}
+        {{ field(class='form-control', **kwargs) }}
+        {% for error in field.errors %}
+            <span class="has-error text-red"><i class="fa fa-times-circle-o"></i>{{ error }}</span>
+        {% endfor %}
+    </div>
+{% endmacro %}
+{% macro render_messages() %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div>{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+{% endmacro %}
+
+{% block content %}
+    Enter name+password of the user to test:
+    <form method="post">
+        {{ form.hidden_tag() }}
+        {{ render_field(form.username) }}
+        {{ render_field(form.password) }}
+
+    <button name="Submit" value="Submit" type="submit">Submit</button>
+    </form>
+
+    {% if response %}
+        Response: {{ response }}
+    {% endif %}
+    <br/>
+    Messages: {{ render_messages() }}
+
+
+{% endblock %}
