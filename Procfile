@@ -1,2 +1,2 @@
 web: gunicorn app:app
-manage: manage.py
+manage: python manage.py
