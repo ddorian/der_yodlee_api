@@ -30,7 +30,7 @@
         {{ render_field(form.username) }}
         {{ render_field(form.password) }}
 
-    <button name="Submit" value="Submit" type="submit">Submit</button>
+        <button name="Submit" value="Submit" type="submit">Submit</button>
     </form>
 
     {% if response %}
@@ -38,6 +38,10 @@
     {% endif %}
     <br/>
     Messages: {{ render_messages() }}
+    {% if user_token %}
+        <iframe src="{{ url_for('iframe', user_token=user_token, token=token) }}" width="600" height="600"></iframe>
+        <script>document.getElementById('rsessionPost').submit();</script>
 
+    {% endif %}
 
 {% endblock %}

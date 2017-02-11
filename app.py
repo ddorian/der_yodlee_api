@@ -1,6 +1,6 @@
 import os
 import requests
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from wtforms.fields import StringField, PasswordField
 from flask_wtf import FlaskForm
 from flask.ext.sqlalchemy import SQLAlchemy
@@ -34,6 +34,8 @@ class User(db.Model):
 def index():
     form = LoginForm()
     response = None
+    user_token = None
+    token = None
     if form.validate_on_submit():
         # todo cache this
         cobSessionToken = get_cobSessionToken()
@@ -46,12 +48,30 @@ def index():
         u.user_token = user_token
         db.session.add(u)
         db.session.commit()
+        # accounts = get_accounts(cobSessionToken, user_token)
+        # transactions = get_transactions(cobSessionToken, user_token)
+        # response = [accounts, transactions]
+        token = get_token(cobSessionToken, user_token)
+    return render_template(
+        'index.html',
+        form=form,
+        response=response,
+        user_token=user_token,
+        token=token
+    )
 
-        accounts = get_accounts(cobSessionToken, user_token)
-        transactions = get_transactions(cobSessionToken, user_token)
-        response = [accounts, transactions]
-    print(form.errors)
-    return render_template('index.html', form=form, response=response)
+
+@app.route('/ifame_')
+def iframe():
+    token = request.args['token']
+    user_token = request.args['user_token']
+    return render_template(
+        'iframe.html',
+        NODE_URL=NODE_URL,
+        FINAPP_ID=FINAPP_ID,
+        user_token=user_token,
+        token=token
+    )
 
 
 def get_accounts(cobSessionToken, user_token):
